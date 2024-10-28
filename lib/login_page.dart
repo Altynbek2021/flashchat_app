@@ -1,3 +1,4 @@
+import 'package:flashchatapp/input_form.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
@@ -11,7 +12,7 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Center(
+            const Center(
               child: Image(
                 image: AssetImage("images/logo.png"),
                 height: 200,
@@ -54,37 +55,6 @@ class LoginPage extends StatelessWidget {
       //   },
       //   child: Text("Go back"),
       // ),
-    );
-  }
-}
-
-class InputForm extends StatelessWidget {
-  const InputForm({
-    super.key,
-    required this.data,
-  });
-  final String data;
-
-  @override
-  Widget build(BuildContext context) {
-    return TextField(
-      decoration: InputDecoration(
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:
-                const BorderSide(color: Colors.lightBlueAccent, width: 0.0),
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:
-                const BorderSide(color: Colors.lightBlueAccent, width: 0.0),
-          ),
-          focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(20),
-            borderSide:
-                const BorderSide(color: Colors.lightBlueAccent, width: 0.0),
-          ),
-          labelText: data),
     );
   }
 }

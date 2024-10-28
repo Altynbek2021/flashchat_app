@@ -39,10 +39,7 @@ class AuthPage extends StatelessWidget {
               ),
               child: TextButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
+                    Navigator.pushNamed(context, "login");
                   },
                   child: const Text("Log in")),
             ),
@@ -58,10 +55,7 @@ class AuthPage extends StatelessWidget {
               ),
               child: TextButton(
                 onPressed: () {
-                  Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                          builder: (context) => const RegisterPage()));
+                  Navigator.pushNamed(context, "register");
                 },
                 child: const Text('Register'),
               ),
