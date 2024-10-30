@@ -2,7 +2,7 @@ import 'package:flashchatapp/input_form.dart';
 import 'package:flutter/material.dart';
 
 class RegisterPage extends StatelessWidget {
-  const RegisterPage({super.key});
+  static const String id = "RegisterPage";
 
   @override
   Widget build(BuildContext context) {
@@ -14,11 +14,14 @@ class RegisterPage extends StatelessWidget {
                 Navigator.pop(context);
               },
               child: Text("Go back")),
-          const Center(
-            child: Image(
-              image: AssetImage("images/logo.png"),
-              height: 200,
-              width: 200,
+          Hero(
+            tag: "logo",
+            child: Container(
+              child: Image(
+                image: AssetImage("images/logo.png"),
+                height: 200,
+                width: 200,
+              ),
             ),
           ),
           InputForm(data: "Enter your email"),

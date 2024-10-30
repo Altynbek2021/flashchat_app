@@ -3,8 +3,7 @@ import 'package:flashchatapp/register_page.dart';
 import 'package:flutter/material.dart';
 
 class AuthPage extends StatelessWidget {
-  const AuthPage({super.key});
-
+  static const String id = "auth_page";
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -13,15 +12,20 @@ class AuthPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Row(
+            Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                ImageIcon(
-                  AssetImage("images/logo.png"),
-                  size: 50,
-                  color: Colors.yellow,
+                Hero(
+                  tag: "logo",
+                  child: Container(
+                    child: ImageIcon(
+                      AssetImage("images/logo.png"),
+                      size: 80,
+                      color: Colors.yellow,
+                    ),
+                  ),
                 ),
-                Text(
+                const Text(
                   " Flash Chat",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                 )
@@ -39,7 +43,7 @@ class AuthPage extends StatelessWidget {
               ),
               child: TextButton(
                   onPressed: () {
-                    Navigator.pushNamed(context, "login");
+                    Navigator.pushNamed(context, LoginPage.id);
                   },
                   child: const Text("Log in")),
             ),
@@ -55,7 +59,7 @@ class AuthPage extends StatelessWidget {
               ),
               child: TextButton(
                 onPressed: () {
-                  Navigator.pushNamed(context, "register");
+                  Navigator.pushNamed(context, RegisterPage.id);
                 },
                 child: const Text('Register'),
               ),

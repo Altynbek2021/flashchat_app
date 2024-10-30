@@ -2,7 +2,7 @@ import 'package:flashchatapp/input_form.dart';
 import 'package:flutter/material.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  static const String id = "LoginPage";
 
   @override
   Widget build(BuildContext context) {
@@ -12,11 +12,14 @@ class LoginPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Center(
-              child: Image(
-                image: AssetImage("images/logo.png"),
-                height: 200,
-                width: 200,
+            Hero(
+              tag: 'logo',
+              child: Container(
+                child: Image(
+                  image: AssetImage("images/logo.png"),
+                  height: 200,
+                  width: 200,
+                ),
               ),
             ),
             InputForm(data: "Enter your email"),
@@ -36,10 +39,8 @@ class LoginPage extends StatelessWidget {
               ),
               child: TextButton(
                   onPressed: () {
-                    Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                            builder: (context) => const LoginPage()));
+                    Navigator.push(context,
+                        MaterialPageRoute(builder: (context) => LoginPage()));
                   },
                   child: const Text(
                     "Log in",
