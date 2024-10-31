@@ -1,8 +1,22 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flashchatapp/chatting_page.dart';
 import 'package:flashchatapp/input_form.dart';
 import 'package:flutter/material.dart';
 
-class RegisterPage extends StatelessWidget {
+class RegisterPage extends StatefulWidget {
   static const String id = "RegisterPage";
+
+  RegisterPage({super.key});
+
+  @override
+  State<RegisterPage> createState() => _RegisterPageState();
+}
+
+class _RegisterPageState extends State<RegisterPage> {
+  final _auth = FirebaseAuth.instance;
+  String email = "";
+
+  String password = "";
 
   @override
   Widget build(BuildContext context) {
@@ -24,11 +38,23 @@ class RegisterPage extends StatelessWidget {
               ),
             ),
           ),
-          InputForm(data: "Enter your email"),
+          InputForm(
+            isPsw: false,
+            data: "Enter your email",
+            onChanged: (String value) {
+              email = value;
+            },
+          ),
           SizedBox(
             height: 30,
           ),
-          InputForm(data: "Enter your password"),
+          InputForm(
+            isPsw: true,
+            data: "Enter your password",
+            onChanged: (String value) {
+              password = value;
+            },
+          ),
           SizedBox(
             height: 30,
           ),
@@ -40,8 +66,16 @@ class RegisterPage extends StatelessWidget {
               color: Colors.lightBlueAccent,
             ),
             child: TextButton(
-                onPressed: () {
-                  Navigator.pushNamed(context, "chat");
+                onPressed: () async {
+                  try {
+                    final newUser = await _auth.createUserWithEmailAndPassword(
+                        email: email, password: password);
+                    if (newUser != null) {
+                      Navigator.pushNamed(context, ChattingPage.id);
+                    }
+                  } catch (e) {
+                    print(e);
+                  }
                 },
                 child: const Text(
                   "Log in",

@@ -1,13 +1,15 @@
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flashchatapp/auth_page.dart';
 import 'package:flashchatapp/chatting_page.dart';
+import 'package:flashchatapp/firebase_options.dart';
 import 'package:flashchatapp/login_page.dart';
 import 'package:flashchatapp/register_page.dart';
 import 'package:flutter/material.dart';
 
 void main() async {
-  // await Firebase.initializeApp(
-  //   options: DefaultFirebaseOptions.currentPlatform,
-  // );
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 

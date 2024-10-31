@@ -4,6 +4,9 @@ import 'package:flutter/material.dart';
 class LoginPage extends StatelessWidget {
   static const String id = "LoginPage";
 
+  String email = '';
+  String password = '';
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -22,11 +25,23 @@ class LoginPage extends StatelessWidget {
                 ),
               ),
             ),
-            InputForm(data: "Enter your email"),
+            InputForm(
+              isPsw: false,
+              data: "Enter your email",
+              onChanged: (String value) {
+                email = value;
+              },
+            ),
             SizedBox(
               height: 30,
             ),
-            InputForm(data: "Enter your password"),
+            InputForm(
+              isPsw: true,
+              data: "Enter your password",
+              onChanged: (String value) {
+                password = value;
+              },
+            ),
             SizedBox(
               height: 30,
             ),
