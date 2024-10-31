@@ -4,7 +4,10 @@ import 'package:flashchatapp/login_page.dart';
 import 'package:flashchatapp/register_page.dart';
 import 'package:flutter/material.dart';
 
-void main() {
+void main() async {
+  // await Firebase.initializeApp(
+  //   options: DefaultFirebaseOptions.currentPlatform,
+  // );
   runApp(const MyApp());
 }
 

@@ -1,0 +1,30 @@
+{
+  "project_info": {
+    "project_number": "81073795834",
+    "firebase_url": "https://flashchat-e7313-default-rtdb.asia-southeast1.firebasedatabase.app",
+    "project_id": "flashchat-e7313",
+    "storage_bucket": "flashchat-e7313.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:81073795834:android:2658080338d856b21b0f43",
+        "android_client_info": {
+          "package_name": "com.example.flashchatapp"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC7S2KmlxPA9hAbICc0LX4Z43-oQ3B52Bg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
