@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class RegisterPage extends StatefulWidget {
   static const String id = "RegisterPage";
 
-  RegisterPage({super.key});
+  const RegisterPage({super.key});
 
   @override
   State<RegisterPage> createState() => _RegisterPageState();
@@ -27,15 +27,13 @@ class _RegisterPageState extends State<RegisterPage> {
               onPressed: () {
                 Navigator.pop(context);
               },
-              child: Text("Go back")),
-          Hero(
+              child: const Text("Go back")),
+          const Hero(
             tag: "logo",
-            child: Container(
-              child: Image(
-                image: AssetImage("images/logo.png"),
-                height: 200,
-                width: 200,
-              ),
+            child: Image(
+              image: AssetImage("images/logo.png"),
+              height: 200,
+              width: 200,
             ),
           ),
           InputForm(
@@ -45,7 +43,7 @@ class _RegisterPageState extends State<RegisterPage> {
               email = value;
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           InputForm(
@@ -55,7 +53,7 @@ class _RegisterPageState extends State<RegisterPage> {
               password = value;
             },
           ),
-          SizedBox(
+          const SizedBox(
             height: 30,
           ),
           Container(
@@ -74,7 +72,7 @@ class _RegisterPageState extends State<RegisterPage> {
                       Navigator.pushNamed(context, ChattingPage.id);
                     }
                   } catch (e) {
-                    print(e);
+                    (e);
                   }
                 },
                 child: const Text(

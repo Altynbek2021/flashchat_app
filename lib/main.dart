@@ -22,9 +22,9 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       initialRoute: AuthPage.id,
       routes: {
-        AuthPage.id: (context) => AuthPage(),
-        LoginPage.id: (context) => LoginPage(),
-        RegisterPage.id: (context) => RegisterPage(),
+        AuthPage.id: (context) => const AuthPage(),
+        LoginPage.id: (context) => const LoginPage(),
+        RegisterPage.id: (context) => const RegisterPage(),
         ChattingPage.id: (context) => ChattingPage()
       },
     );

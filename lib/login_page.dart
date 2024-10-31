@@ -1,9 +1,19 @@
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:flashchatapp/chatting_page.dart';
 import 'package:flashchatapp/input_form.dart';
 import 'package:flutter/material.dart';
 
-class LoginPage extends StatelessWidget {
+class LoginPage extends StatefulWidget {
   static const String id = "LoginPage";
 
+  const LoginPage({super.key});
+
+  @override
+  State<LoginPage> createState() => _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  final _auth = FirebaseAuth.instance;
   String email = '';
   String password = '';
 
@@ -11,18 +21,16 @@ class LoginPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       body: Padding(
-        padding: EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(20.0),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Hero(
+            const Hero(
               tag: 'logo',
-              child: Container(
-                child: Image(
-                  image: AssetImage("images/logo.png"),
-                  height: 200,
-                  width: 200,
-                ),
+              child: Image(
+                image: AssetImage("images/logo.png"),
+                height: 200,
+                width: 200,
               ),
             ),
             InputForm(
@@ -32,7 +40,7 @@ class LoginPage extends StatelessWidget {
                 email = value;
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             InputForm(
@@ -42,7 +50,7 @@ class LoginPage extends StatelessWidget {
                 password = value;
               },
             ),
-            SizedBox(
+            const SizedBox(
               height: 30,
             ),
             Container(
@@ -53,9 +61,16 @@ class LoginPage extends StatelessWidget {
                 color: Colors.lightBlueAccent,
               ),
               child: TextButton(
-                  onPressed: () {
-                    Navigator.push(context,
-                        MaterialPageRoute(builder: (context) => LoginPage()));
+                  onPressed: () async {
+                    try {
+                      final user = await _auth.signInWithEmailAndPassword(
+                          email: email, password: password);
+                      if (user != null) {
+                        Navigator.pushNamed(context, ChattingPage.id);
+                      }
+                    } catch (e) {
+                      (e);
+                    }
                   },
                   child: const Text(
                     "Log in",
@@ -65,12 +80,6 @@ class LoginPage extends StatelessWidget {
           ],
         ),
       ),
-      // body: TextButton(
-      //   onPressed: () {
-      //     Navigator.pop(context);
-      //   },
-      //   child: Text("Go back"),
-      // ),
     );
   }
 }

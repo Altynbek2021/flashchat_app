@@ -20,12 +20,12 @@ class _ChattingPageState extends State<ChattingPage> {
 
   void getCurrentUser() async {
     try {
-      final user = await _auth.currentUser;
+      final user = _auth.currentUser;
       if (user != null) {
         loggedinUser = user;
       }
     } catch (e) {
-      print(e);
+      (e);
     }
   }
 
@@ -36,12 +36,14 @@ class _ChattingPageState extends State<ChattingPage> {
         leading: null,
         actions: <Widget>[
           IconButton(
-              icon: Icon(Icons.close),
+              icon: const Icon(Icons.close),
               onPressed: () {
+                _auth.signOut();
+                Navigator.pop(context);
                 //Implement logout functionality
               }),
         ],
-        title: Text('⚡️Chat'),
+        title: const Text('⚡️Chat'),
         backgroundColor: Colors.lightBlueAccent,
       ),
       body: SafeArea(

@@ -14,20 +14,18 @@ class AuthPage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Row(
+            const Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Hero(
                   tag: "logo",
-                  child: Container(
-                    child: ImageIcon(
-                      AssetImage("images/logo.png"),
-                      size: 80,
-                      color: Colors.yellow,
-                    ),
+                  child: ImageIcon(
+                    AssetImage("images/logo.png"),
+                    size: 80,
+                    color: Colors.yellow,
                   ),
                 ),
-                const Text(
+                Text(
                   " Flash Chatting",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                 )
