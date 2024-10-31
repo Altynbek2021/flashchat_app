@@ -28,7 +28,7 @@ class AuthPage extends StatelessWidget {
                   ),
                 ),
                 const Text(
-                  " Flash Chat",
+                  " Flash Chatting",
                   style: TextStyle(fontWeight: FontWeight.bold, fontSize: 30),
                 )
               ],
