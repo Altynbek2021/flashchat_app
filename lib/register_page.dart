@@ -68,9 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
                   try {
                     final newUser = await _auth.createUserWithEmailAndPassword(
                         email: email, password: password);
-                    if (newUser != null) {
-                      Navigator.pushNamed(context, ChattingPage.id);
-                    }
+                    Navigator.pushNamed(context, ChattingPage.id);
                   } catch (e) {
                     (e);
                   }

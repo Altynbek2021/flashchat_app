@@ -4,6 +4,8 @@ import 'package:flutter/material.dart';
 
 class ChattingPage extends StatefulWidget {
   static const id = "ChattingPage";
+
+  const ChattingPage({super.key});
   @override
   State<ChattingPage> createState() => _ChattingPageState();
 }
