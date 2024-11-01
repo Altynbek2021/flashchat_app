@@ -81,37 +81,11 @@ class _ChattingPageState extends State<ChattingPage> {
                             final sender = data['sender'] ?? 'Unknown';
                             final text = data['text'] ?? '';
 
-                            return Padding(
-                              padding: EdgeInsets.all(10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.end,
-                                children: [
-                                  Text(
-                                    sender,
-                                    style: const TextStyle(
-                                        fontSize: 12, color: Colors.black54),
-                                  ),
-                                  Material(
-                                    borderRadius: BorderRadius.only(
-                                      topLeft: Radius.circular(30),
-                                      bottomLeft: Radius.circular(30),
-                                      bottomRight: Radius.circular(30),
-                                    ),
-                                    elevation: 20,
-                                    color: Colors.lightBlueAccent,
-                                    child: Padding(
-                                      padding: const EdgeInsets.symmetric(
-                                          vertical: 10, horizontal: 20),
-                                      child: Text(
-                                        text,
-                                        style: const TextStyle(
-                                            fontSize: 15, color: Colors.white),
-                                      ),
-                                    ),
-                                  )
-                                ],
-                              ),
-                            );
+                            final currentUser = loggedinUser.email;
+                            bool isMe = currentUser == sender;
+
+                            return BubbleMessage(
+                                sender: sender, text: text, isMe: isMe);
                           }).toList(),
                         );
                       }
@@ -160,6 +134,50 @@ class _ChattingPageState extends State<ChattingPage> {
             ),
           ],
         ),
+      ),
+    );
+  }
+}
+
+class BubbleMessage extends StatelessWidget {
+  const BubbleMessage(
+      {super.key,
+      required this.sender,
+      required this.text,
+      required this.isMe});
+
+  final dynamic sender;
+  final dynamic text;
+  final bool isMe;
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: EdgeInsets.all(10),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.end,
+        children: [
+          Text(
+            sender,
+            style: const TextStyle(fontSize: 12, color: Colors.black54),
+          ),
+          Material(
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(30),
+              bottomLeft: Radius.circular(30),
+              bottomRight: Radius.circular(30),
+            ),
+            elevation: 20,
+            color: isMe ? Colors.lightBlueAccent : Colors.black,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+              child: Text(
+                text,
+                style: const TextStyle(fontSize: 15, color: Colors.white),
+              ),
+            ),
+          )
+        ],
       ),
     );
   }
