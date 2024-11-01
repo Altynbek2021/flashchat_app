@@ -1,6 +1,7 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flashchatapp/constant.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChattingPage extends StatefulWidget {
   static const id = "ChattingPage";
@@ -12,7 +13,9 @@ class ChattingPage extends StatefulWidget {
 
 class _ChattingPageState extends State<ChattingPage> {
   final _auth = FirebaseAuth.instance;
+  final _firestore = FirebaseFirestore.instance;
   late User loggedinUser;
+  String messageText = "";
 
   @override
   void initState() {
@@ -61,13 +64,26 @@ class _ChattingPageState extends State<ChattingPage> {
                   Expanded(
                     child: TextField(
                       onChanged: (value) {
+                        messageText = value;
+                        setState(() {});
                         //Do something with the user input.
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
                   ),
                   TextButton(
-                    onPressed: () {
+                    onPressed: () async {
+                      try {
+                        await _firestore.collection("messages").add({
+                          'text': messageText,
+                          'sender': loggedinUser.email,
+                          'timestamp': FieldValue.serverTimestamp(),
+                        });
+                        print("clicked");
+                      } catch (e) {
+                        print(
+                            "Error: messageText or loggedinUser is null. $e, $messageText");
+                      }
                       //Implement send functionality.
                     },
                     child: const Text(
