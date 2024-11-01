@@ -67,6 +67,44 @@ class _ChattingPageState extends State<ChattingPage> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+              stream: _firestore.collection("messages").snapshots(),
+              builder: (context, snapshot) {
+                // Check for errors
+                if (snapshot.hasError) {
+                  return Center(child: Text('Error: ${snapshot.error}'));
+                }
+
+                // Check if data is still loading
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return Center(child: CircularProgressIndicator());
+                }
+
+                // Display data in Column if snapshot has data
+                if (snapshot.hasData) {
+                  final messages = snapshot.data!.docs;
+
+                  return SingleChildScrollView(
+                    child: Column(
+                      children: messages.map((doc) {
+                        // Each document's data
+                        final data = doc.data();
+                        final sender = data['sender'] ?? 'Unknown';
+                        final text = data['text'] ?? '';
+
+                        return ListTile(
+                          title: Text(sender),
+                          subtitle: Text(text),
+                        );
+                      }).toList(),
+                    ),
+                  );
+                }
+
+                // If no data, show empty message
+                return Center(child: Text("No messages found"));
+              },
+            ),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
