@@ -12,6 +12,7 @@ class ChattingPage extends StatefulWidget {
 }
 
 class _ChattingPageState extends State<ChattingPage> {
+  final messageTextcontroller = TextEditingController();
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
   late User loggedinUser;
@@ -21,16 +22,6 @@ class _ChattingPageState extends State<ChattingPage> {
   void initState() {
     super.initState();
     getCurrentUser();
-  }
-
-  void getMessages() {
-    _firestore.collection("messages").snapshots().listen((snapshot) {
-      for (var message in snapshot.docs) {
-        Map<String, dynamic> data = message.data()
-            as Map<String, dynamic>; // Retrieve data as Map<String, dynamic>
-        print(data); // Print each document’s data in real-time
-      }
-    });
   }
 
   void getCurrentUser() async {
@@ -53,93 +44,118 @@ class _ChattingPageState extends State<ChattingPage> {
           IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                getMessages();
-                // _auth.signOut();
-                // Navigator.pop(context);
-                //Implement logout functionality
+                _auth.signOut();
+                Navigator.pop(context);
+                // Implement logout functionality
               }),
         ],
         title: const Text('⚡️Chat'),
         backgroundColor: Colors.lightBlueAccent,
       ),
       body: SafeArea(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-              stream: _firestore.collection("messages").snapshots(),
-              builder: (context, snapshot) {
-                // Check for errors
-                if (snapshot.hasError) {
-                  return Center(child: Text('Error: ${snapshot.error}'));
-                }
+        child: Stack(
+          children: [
+            Align(
+              alignment: Alignment.topRight,
+              child: Padding(
+                padding: const EdgeInsets.only(bottom: 50),
+                child: SingleChildScrollView(
+                  child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                    stream: _firestore.collection("messages").snapshots(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasError) {
+                        return Center(child: Text('Error: ${snapshot.error}'));
+                      }
+                      if (snapshot.connectionState == ConnectionState.waiting) {
+                        return Center(child: CircularProgressIndicator());
+                      }
 
-                // Check if data is still loading
-                if (snapshot.connectionState == ConnectionState.waiting) {
-                  return Center(child: CircularProgressIndicator());
-                }
+                      if (snapshot.hasData) {
+                        final messages = snapshot.data!.docs;
 
-                // Display data in Column if snapshot has data
-                if (snapshot.hasData) {
-                  final messages = snapshot.data!.docs;
+                        return Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: messages.map((doc) {
+                            // Each document's data
+                            final data = doc.data();
+                            final sender = data['sender'] ?? 'Unknown';
+                            final text = data['text'] ?? '';
 
-                  return SingleChildScrollView(
-                    child: Column(
-                      children: messages.map((doc) {
-                        // Each document's data
-                        final data = doc.data();
-                        final sender = data['sender'] ?? 'Unknown';
-                        final text = data['text'] ?? '';
-
-                        return ListTile(
-                          title: Text(sender),
-                          subtitle: Text(text),
+                            return Padding(
+                              padding: EdgeInsets.all(10),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                children: [
+                                  Text(
+                                    sender,
+                                    style: const TextStyle(
+                                        fontSize: 12, color: Colors.black54),
+                                  ),
+                                  Material(
+                                    borderRadius: BorderRadius.only(
+                                      topLeft: Radius.circular(30),
+                                      bottomLeft: Radius.circular(30),
+                                      bottomRight: Radius.circular(30),
+                                    ),
+                                    elevation: 20,
+                                    color: Colors.lightBlueAccent,
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          vertical: 10, horizontal: 20),
+                                      child: Text(
+                                        text,
+                                        style: const TextStyle(
+                                            fontSize: 15, color: Colors.white),
+                                      ),
+                                    ),
+                                  )
+                                ],
+                              ),
+                            );
+                          }).toList(),
                         );
-                      }).toList(),
-                    ),
-                  );
-                }
+                      }
 
-                // If no data, show empty message
-                return Center(child: Text("No messages found"));
-              },
-            ),
-            Container(
-              decoration: kMessageContainerDecoration,
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: <Widget>[
-                  Expanded(
-                    child: TextField(
-                      onChanged: (value) {
-                        messageText = value;
-                        setState(() {});
-                        //Do something with the user input.
-                      },
-                      decoration: kMessageTextFieldDecoration,
-                    ),
+                      // If no data, show empty message
+                      return Center(child: Text("No messages found"));
+                    },
                   ),
-                  TextButton(
-                    onPressed: () async {
-                      try {
-                        await _firestore.collection("messages").add({
+                ),
+              ),
+            ),
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: Container(
+                decoration: kMessageContainerDecoration,
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: <Widget>[
+                    Expanded(
+                      child: TextField(
+                        controller: messageTextcontroller,
+                        onChanged: (value) {
+                          messageText = value;
+                          setState(() {});
+                          //Do something with the user input.
+                        },
+                        decoration: kMessageTextFieldDecoration,
+                      ),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        messageTextcontroller.clear();
+                        _firestore.collection("messages").add({
                           'text': messageText,
                           'sender': loggedinUser.email,
-                          // 'timestamp': FieldValue.serverTimestamp(),
                         });
-                      } catch (e) {
-                        print(
-                            "Error: messageText or loggedinUser is null. $e, $messageText");
-                      }
-                      //Implement send functionality.
-                    },
-                    child: const Text(
-                      'Send',
-                      style: kSendButtonTextStyle,
+                      },
+                      child: const Text(
+                        'Send',
+                        style: kSendButtonTextStyle,
+                      ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
           ],
