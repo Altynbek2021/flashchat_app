@@ -154,30 +154,34 @@ class BubbleMessage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Padding(
       padding: EdgeInsets.all(10),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.end,
-        children: [
-          Text(
-            sender,
-            style: const TextStyle(fontSize: 12, color: Colors.black54),
-          ),
-          Material(
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(30),
-              bottomLeft: Radius.circular(30),
-              bottomRight: Radius.circular(30),
+      child: Align(
+        alignment: !isMe ? Alignment.centerLeft : Alignment.centerRight,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.end,
+          children: [
+            Text(
+              sender,
+              style: const TextStyle(fontSize: 12, color: Colors.black54),
             ),
-            elevation: 20,
-            color: isMe ? Colors.lightBlueAccent : Colors.black,
-            child: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
-              child: Text(
-                text,
-                style: const TextStyle(fontSize: 15, color: Colors.white),
+            Material(
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
               ),
-            ),
-          )
-        ],
+              elevation: 20,
+              color: isMe ? Colors.lightBlueAccent : Colors.black,
+              child: Padding(
+                padding:
+                    const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                child: Text(
+                  text,
+                  style: const TextStyle(fontSize: 15, color: Colors.white),
+                ),
+              ),
+            )
+          ],
+        ),
       ),
     );
   }
