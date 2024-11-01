@@ -23,6 +23,16 @@ class _ChattingPageState extends State<ChattingPage> {
     getCurrentUser();
   }
 
+  void getMessages() {
+    _firestore.collection("messages").snapshots().listen((snapshot) {
+      for (var message in snapshot.docs) {
+        Map<String, dynamic> data = message.data()
+            as Map<String, dynamic>; // Retrieve data as Map<String, dynamic>
+        print(data); // Print each document’s data in real-time
+      }
+    });
+  }
+
   void getCurrentUser() async {
     try {
       final user = _auth.currentUser;
@@ -43,8 +53,9 @@ class _ChattingPageState extends State<ChattingPage> {
           IconButton(
               icon: const Icon(Icons.close),
               onPressed: () {
-                _auth.signOut();
-                Navigator.pop(context);
+                getMessages();
+                // _auth.signOut();
+                // Navigator.pop(context);
                 //Implement logout functionality
               }),
         ],
@@ -77,9 +88,8 @@ class _ChattingPageState extends State<ChattingPage> {
                         await _firestore.collection("messages").add({
                           'text': messageText,
                           'sender': loggedinUser.email,
-                          'timestamp': FieldValue.serverTimestamp(),
+                          // 'timestamp': FieldValue.serverTimestamp(),
                         });
-                        print("clicked");
                       } catch (e) {
                         print(
                             "Error: messageText or loggedinUser is null. $e, $messageText");
