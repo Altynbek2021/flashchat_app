@@ -12,9 +12,10 @@ class ChattingPage extends StatefulWidget {
 }
 
 class _ChattingPageState extends State<ChattingPage> {
-  final messageTextcontroller = TextEditingController();
+  final messageTextController = TextEditingController();
   final _auth = FirebaseAuth.instance;
   final _firestore = FirebaseFirestore.instance;
+  final ScrollController _scrollController = ScrollController();
   late User loggedinUser;
   String messageText = "";
 
@@ -31,7 +32,13 @@ class _ChattingPageState extends State<ChattingPage> {
         loggedinUser = user;
       }
     } catch (e) {
-      (e);
+      print(e);
+    }
+  }
+
+  void scrollToBottom() {
+    if (_scrollController.hasClients) {
+      _scrollController.jumpTo(_scrollController.position.maxScrollExtent);
     }
   }
 
@@ -42,94 +49,90 @@ class _ChattingPageState extends State<ChattingPage> {
         leading: null,
         actions: <Widget>[
           IconButton(
-              icon: const Icon(Icons.close),
-              onPressed: () {
-                _auth.signOut();
-                Navigator.pop(context);
-                // Implement logout functionality
-              }),
+            icon: const Icon(Icons.close),
+            onPressed: () {
+              _auth.signOut();
+              Navigator.pop(context);
+            },
+          ),
         ],
         title: const Text('⚡️Chat'),
         backgroundColor: Colors.lightBlueAccent,
       ),
       body: SafeArea(
-        child: Stack(
+        child: Column(
           children: [
-            Align(
-              alignment: Alignment.topRight,
-              child: Padding(
-                padding: const EdgeInsets.only(bottom: 50),
-                child: SingleChildScrollView(
-                  child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
-                    stream: _firestore.collection("messages").snapshots(),
-                    builder: (context, snapshot) {
-                      if (snapshot.hasError) {
-                        return Center(child: Text('Error: ${snapshot.error}'));
-                      }
-                      if (snapshot.connectionState == ConnectionState.waiting) {
-                        return Center(child: CircularProgressIndicator());
-                      }
+            Expanded(
+              child: StreamBuilder<QuerySnapshot<Map<String, dynamic>>>(
+                stream: _firestore
+                    .collection("messages")
+                    .orderBy("timestamp")
+                    .snapshots(),
+                builder: (context, snapshot) {
+                  if (snapshot.hasError) {
+                    return Center(child: Text('Error: ${snapshot.error}'));
+                  }
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Center(child: CircularProgressIndicator());
+                  }
 
-                      if (snapshot.hasData) {
-                        final messages = snapshot.data!.docs;
+                  if (snapshot.hasData) {
+                    final messages = snapshot.data!.docs;
+                    WidgetsBinding.instance
+                        .addPostFrameCallback((_) => scrollToBottom());
 
-                        return Column(
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: messages.map((doc) {
-                            // Each document's data
-                            final data = doc.data();
-                            final sender = data['sender'] ?? 'Unknown';
-                            final text = data['text'] ?? '';
+                    return ListView.builder(
+                      controller: _scrollController,
+                      itemCount: messages.length,
+                      itemBuilder: (context, index) {
+                        final data = messages[index].data();
+                        final sender = data['sender'] ?? 'Unknown';
+                        final text = data['text'] ?? '';
+                        final currentUser = loggedinUser.email;
+                        bool isMe = currentUser == sender;
 
-                            final currentUser = loggedinUser.email;
-                            bool isMe = currentUser == sender;
+                        return BubbleMessage(
+                            sender: sender, text: text, isMe: isMe);
+                      },
+                    );
+                  }
 
-                            return BubbleMessage(
-                                sender: sender, text: text, isMe: isMe);
-                          }).toList(),
-                        );
-                      }
-
-                      // If no data, show empty message
-                      return Center(child: Text("No messages found"));
-                    },
-                  ),
-                ),
+                  return const Center(child: Text("No messages found"));
+                },
               ),
             ),
-            Align(
-              alignment: Alignment.bottomCenter,
-              child: Container(
-                decoration: kMessageContainerDecoration,
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: <Widget>[
-                    Expanded(
-                      child: TextField(
-                        controller: messageTextcontroller,
-                        onChanged: (value) {
-                          messageText = value;
-                          setState(() {});
-                          //Do something with the user input.
-                        },
-                        decoration: kMessageTextFieldDecoration,
-                      ),
+            Container(
+              decoration: kMessageContainerDecoration,
+              padding: EdgeInsets.only(
+                  bottom: MediaQuery.of(context).viewInsets.bottom),
+              child: Row(
+                children: <Widget>[
+                  Expanded(
+                    child: TextField(
+                      controller: messageTextController,
+                      onChanged: (value) {
+                        messageText = value;
+                      },
+                      decoration: kMessageTextFieldDecoration,
                     ),
-                    TextButton(
-                      onPressed: () {
-                        messageTextcontroller.clear();
+                  ),
+                  TextButton(
+                    onPressed: () {
+                      if (messageText.isNotEmpty) {
+                        messageTextController.clear();
                         _firestore.collection("messages").add({
                           'text': messageText,
                           'sender': loggedinUser.email,
+                          'timestamp': FieldValue.serverTimestamp(),
                         });
-                      },
-                      child: const Text(
-                        'Send',
-                        style: kSendButtonTextStyle,
-                      ),
+                      }
+                    },
+                    child: const Text(
+                      'Send',
+                      style: kSendButtonTextStyle,
                     ),
-                  ],
-                ),
+                  ),
+                ],
               ),
             ),
           ],
@@ -140,24 +143,26 @@ class _ChattingPageState extends State<ChattingPage> {
 }
 
 class BubbleMessage extends StatelessWidget {
-  const BubbleMessage(
-      {super.key,
-      required this.sender,
-      required this.text,
-      required this.isMe});
+  const BubbleMessage({
+    super.key,
+    required this.sender,
+    required this.text,
+    required this.isMe,
+  });
 
-  final dynamic sender;
-  final dynamic text;
+  final String sender;
+  final String text;
   final bool isMe;
 
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsets.all(10),
+      padding: const EdgeInsets.all(10),
       child: Align(
-        alignment: !isMe ? Alignment.centerLeft : Alignment.centerRight,
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+          crossAxisAlignment:
+              isMe ? CrossAxisAlignment.end : CrossAxisAlignment.start,
           children: [
             Text(
               sender,
@@ -165,12 +170,13 @@ class BubbleMessage extends StatelessWidget {
             ),
             Material(
               borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(30),
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
+                topLeft: isMe ? const Radius.circular(30) : Radius.zero,
+                topRight: isMe ? Radius.zero : const Radius.circular(30),
+                bottomLeft: const Radius.circular(30),
+                bottomRight: const Radius.circular(30),
               ),
-              elevation: 20,
-              color: isMe ? Colors.lightBlueAccent : Colors.black,
+              elevation: 5,
+              color: isMe ? Colors.lightBlueAccent : Colors.green,
               child: Padding(
                 padding:
                     const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
@@ -179,7 +185,7 @@ class BubbleMessage extends StatelessWidget {
                   style: const TextStyle(fontSize: 15, color: Colors.white),
                 ),
               ),
-            )
+            ),
           ],
         ),
       ),
