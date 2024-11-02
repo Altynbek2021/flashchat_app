@@ -29,12 +29,14 @@ class _LoginPageState extends State<LoginPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Hero(
-                tag: 'logo',
-                child: Image(
-                  image: AssetImage("images/logo.png"),
-                  height: 200,
-                  width: 200,
+              const Flexible(
+                child: Hero(
+                  tag: 'logo',
+                  child: Image(
+                    image: AssetImage("images/logo.png"),
+                    height: 200,
+                    width: 200,
+                  ),
                 ),
               ),
               InputForm(

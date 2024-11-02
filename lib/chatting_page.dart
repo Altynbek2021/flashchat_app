@@ -32,7 +32,7 @@ class _ChattingPageState extends State<ChattingPage> {
         loggedinUser = user;
       }
     } catch (e) {
-      print(e);
+      (e);
     }
   }
 

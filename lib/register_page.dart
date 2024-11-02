@@ -33,12 +33,14 @@ class _RegisterPageState extends State<RegisterPage> {
                   Navigator.pop(context);
                 },
                 child: const Text("Go back")),
-            const Hero(
-              tag: "logo",
-              child: Image(
-                image: AssetImage("images/logo.png"),
-                height: 200,
-                width: 200,
+            const Flexible(
+              child: Hero(
+                tag: "logo",
+                child: Image(
+                  image: AssetImage("images/logo.png"),
+                  height: 200,
+                  width: 200,
+                ),
               ),
             ),
             InputForm(
